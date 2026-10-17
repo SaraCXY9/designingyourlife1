@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>人生四象平衡</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* Layout: single reading column, five-step journey with a sticky step bar; one SVG compass chart reused for current vs ideal */
+:root{
+  --bg:#f5f6f3; --surface:#ffffff; --ink:#1f2a2b; --muted:#5f6b6a; --line:#dde2dd;
+  --accent:#2f6f66; --accent-soft:#e1eeeb;
+  --work:#3d6fb0; --play:#d08a2c; --love:#c2556b; --health:#3f9a63;
+  --gravity:#6b5ca5; --gravity-soft:#ece8f6;
+  --serif:"Noto Serif SC","Songti SC",serif; --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141a1a; --surface:#1d2525; --ink:#e7ecea; --muted:#9aa7a4; --line:#2f3a39;
+  --accent:#6cc0b2; --accent-soft:#1f3532;
+  --work:#78a6e6; --play:#e8ac57; --love:#e78398; --health:#6fcb91;
+  --gravity:#a99be0; --gravity-soft:#2a2640; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a1a; --surface:#1d2525; --ink:#e7ecea; --muted:#9aa7a4; --line:#2f3a39;
+  --accent:#6cc0b2; --accent-soft:#1f3532;
+  --work:#78a6e6; --play:#e8ac57; --love:#e78398; --health:#6fcb91;
+  --gravity:#a99be0; --gravity-soft:#2a2640; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.7}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+header h1{font-family:var(--serif);font-size:clamp(28px,6vw,40px);margin:0 0 6px;text-wrap:balance;letter-spacing:.02em}
+header p{color:var(--muted);margin:0;max-width:60ch}
+nav.steps{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:6px;padding-block:14px;margin-top:18px;overflow-x:auto;border-bottom:1px solid var(--line)}
+nav.steps button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;padding:6px 12px;border-radius:999px;cursor:pointer}
+nav.steps button[aria-current="step"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
+nav.steps button.done{color:var(--accent);border-color:var(--accent)}
+section{padding-top:24px}
+h2{font-family:var(--serif);font-size:24px;margin:0 0 6px;text-wrap:balance}
+.lead{color:var(--muted);margin:0 0 20px;max-width:62ch}
+.scale-key{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:20px}
+.scale-key b{color:var(--ink);font-variant-numeric:tabular-nums}
+.dim{display:grid;gap:10px;padding:16px 0;border-top:1px solid var(--line)}
+.dim-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;flex:0 0 auto;align-self:center}
+.dim-name{font-family:var(--serif);font-size:19px;font-weight:700}
+.dim-desc{color:var(--muted);font-size:14px}
+.pick{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.pick button{font:inherit;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:8px 4px;cursor:pointer;display:grid;gap:2px;justify-items:center;min-width:0}
+.pick button .n{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.pick button .t{font-size:11px;color:var(--muted);line-height:1.3;text-align:center}
+.pick button[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.pick button[aria-pressed="true"] .t{color:#fff;opacity:.9}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chart-box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;justify-items:center;gap:10px;margin-top:20px}
+.chart-box svg{width:100%;max-width:380px;height:auto}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:18px;height:3px;border-radius:2px;display:inline-block}
+.insight{font-size:15px;max-width:60ch;text-align:left;width:100%}
+.next{display:flex;justify-content:space-between;gap:10px;margin-top:28px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:700;border:0;background:var(--accent);color:var(--bg);padding:10px 20px;border-radius:8px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 14px;border-radius:8px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.tabs button[aria-selected="true"]{border-color:var(--c);box-shadow:inset 0 -3px 0 var(--c);font-weight:700}
+.tabs .count{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.add-row{display:flex;gap:8px}
+.add-row input{flex:1;min-width:0;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.issue{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px;display:grid;gap:12px}
+.issue-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.issue-title{font-weight:700;font-size:17px;min-width:0;overflow-wrap:anywhere}
+.del{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);cursor:pointer;flex:0 0 auto}
+.q{font-size:14px;color:var(--muted)}
+.choice{display:flex;gap:8px;flex-wrap:wrap}
+.choice button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer}
+.choice button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
+.choice button.g[aria-pressed="true"]{background:var(--gravity-soft);border-color:var(--gravity);color:var(--gravity)}
+.panel{border-left:3px solid var(--accent);padding-left:12px;display:grid;gap:8px}
+.panel.g{border-color:var(--gravity)}
+.panel p{margin:0;font-size:14px}
+textarea{width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical;min-height:72px}
+.checks{display:grid;gap:6px}
+.checks label{display:flex;gap:8px;align-items:flex-start;font-size:14px;cursor:pointer}
+.checks input{margin-top:5px;accent-color:var(--accent)}
+.stage{font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px;justify-self:start}
+.tag-g{font-size:12px;font-weight:700;color:var(--gravity);background:var(--gravity-soft);padding:2px 8px;border-radius:999px;margin-left:6px;white-space:nowrap}
+.empty{color:var(--muted);font-size:14px;padding:16px 0}
+.gap-list{display:grid;gap:14px}
+.gap-item{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:10px}
+.gap-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.arrow{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+.example{font-size:13px;color:var(--muted);background:var(--bg);border-radius:8px;padding:8px 12px}
+.summary h3{font-family:var(--serif);font-size:18px;margin:24px 0 8px}
+.summary ul{margin:0;padding-left:20px}
+.summary li{margin:4px 0}
+.copy-note{font-size:13px;color:var(--muted)}
+@media (max-width:480px){.pick button .t{font-size:10px}}
+@media (prefers-reduced-motion:no-preference){.chart-box polygon{transition:all .3s ease}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>人生四象平衡</h1>
+    <p>在下面的练习里，我们将一起探索人生的四个象限：工作、玩乐、爱与关系、健康。我们每天的时间和心力究竟放在了哪里？每个人生方向里有哪些问题值得我们仔细梳理，又有哪些问题在等待我们去接纳？当你完成所有步骤后，我们会一起找到解决这些问题的具体步骤，从一个很小很小的起点出发。</p>
+  </header>
+
+  <nav class="steps" id="steps" aria-label="步骤"></nav>
+
+  <!-- Step 1 -->
+  <section id="s1">
+    <h2>第一步 · 此刻的投入</h2>
+    <p class="lead">请你凭第一感觉，评估自己在当前这个人生阶段，在每个领域投入了多少时间和心力。这些分数会帮助我们看清自己当下生活的状态。</p>
+    <div class="scale-key" id="scaleKey"></div>
+    <div id="nowPick"></div>
+    <div class="chart-box">
+      <div id="chartNow"></div>
+      <p class="insight" id="insightNow"></p>
+    </div>
+    <div class="next"><span></span><button class="btn" data-go="1">下一步：梳理困扰</button></div>
+  </section>
+
+  <!-- Step 2 -->
+  <section id="s2" hidden>
+    <h2>第二步 · 每个领域里的困扰</h2>
+    <p class="lead">接下来，请你在每个领域里写下自己正在面对的问题，例如“我希望赚更多的钱”，或者“我和伴侣很少有机会深入交流”。一个领域里可以写下好几个问题。写完之后，我们会逐一思考：这个问题是可以被解决的，还是一个“重力问题”？</p>
+    <div class="example" style="margin-bottom:16px">我们把一类问题称为<b>重力问题</b>。就像地心引力一样，它们是客观存在的事实，我们无法改变它们，只能选择接纳。比如“我的专业本身找工作就比较困难”，就是一个重力问题。如果我们反复为它纠结，只会不断消耗自己。我们可以把它<b>重新定义</b>成一个能够着手解决的问题，例如“我怎样让自己的经历在同专业的求职者中更有辨识度？”</div>
+    <div class="tabs" role="tablist" id="dimTabs"></div>
+    <div class="add-row">
+      <label for="newIssue" class="q" hidden>新问题</label>
+      <input id="newIssue" placeholder="写下一个困扰，按回车添加">
+      <button class="btn" id="addIssue">添加</button>
+    </div>
+    <div id="issueList"></div>
+    <div class="next"><button class="btn ghost" data-go="0">上一步</button><button class="btn" data-go="2">下一步：理想分配</button></div>
+  </section>
+
+  <!-- Step 3 -->
+  <section id="s3" hidden>
+    <h2>第三步 · 理想的分配</h2>
+    <p class="lead">梳理完这些问题以后，请你再回答一次：在接下来的一段日子里，你<b>希望</b>自己在每个领域投入多少时间和心力？</p>
+    <div id="idealPick"></div>
+    <div class="chart-box">
+      <div id="chartIdeal"></div>
+      <div class="legend"><span><i class="swatch" style="background:var(--muted)"></i>现在</span><span><i class="swatch" style="background:var(--accent)"></i>理想</span></div>
+      <p class="insight" id="insightIdeal"></p>
+    </div>
+    <div class="next"><button class="btn ghost" data-go="1">上一步</button><button class="btn" data-go="3">下一步：最小一步</button></div>
+  </section>
+
+  <!-- Step 4 -->
+  <section id="s4" hidden>
+    <h2>第四步 · 很小很小的一步</h2>
+    <p class="lead">改变可以从小处慢慢开始。请你为每一个想要调整的领域，写下一个这周就能开始的小动作。这个动作越小越好，小到你几乎不会失败。</p>
+    <div class="example" style="margin-bottom:16px">举个例子：如果你希望更多地照顾自己的健康，而现在每天只睡 3 小时，你可以先给自己定一个小目标，比如每天比平时提前 1 小时上床，或者坚持一周固定的睡前放松流程。等这个小习惯稳定下来，再一步步往前推进。</div>
+    <div class="gap-list" id="gapList"></div>
+    <div class="next"><button class="btn ghost" data-go="2">上一步</button><button class="btn" data-go="4">生成我的总结</button></div>
+  </section>
+
+  <!-- Step 5 -->
+  <section id="s5" hidden class="summary">
+    <h2>我的平衡总结</h2>
+    <p class="lead">下面是你这次练习的总结。你可以截图保存，也可以复制文字发给自己，过一段时间再回来看看自己的变化。</p>
+    <div class="chart-box"><div id="chartSum"></div>
+      <div class="legend"><span><i class="swatch" style="background:var(--muted)"></i>现在</span><span><i class="swatch" style="background:var(--accent)"></i>理想</span></div>
+    </div>
+    <div id="sumBody"></div>
+    <div class="next"><button class="btn ghost" data-go="3">上一步</button><span style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="copy-note" id="copyNote"></span><button class="btn" id="copyBtn">复制总结文字</button></span></div>
+  </section>
+</div>
+
+<script>
+const DIMS=[
+ {k:'work',n:'工作',d:'学业、事业、赚钱、成长与成就',c:'var(--work)'},
+ {k:'play',n:'玩乐',d:'兴趣、放松、好奇心、纯粹的快乐',c:'var(--play)'},
+ {k:'love',n:'爱',d:'家人、伴侣、朋友，被理解与联结',c:'var(--love)'},
+ {k:'health',n:'健康',d:'睡眠、饮食、运动、情绪与身体照顾',c:'var(--health)'}
+];
+const SCALE=[
+ ['几乎没有','这段时间我几乎没有在这件事上花时间和心力。'],
+ ['偶尔','我偶尔会想起它，也只零星花过一点时间。'],
+ ['时有时无','我每周会投入一些时间，但投入并不稳定。'],
+ ['经常','我在大部分日子里都会为它投入时间和心力。'],
+ ['几乎每天','我几乎每天都在意它，并持续为它投入。']
+];
+const STEP_NAMES=['此刻投入','梳理困扰','理想分配','最小一步','总结'];
+const ACTIONS=['查过资料、看过相关的人或内容','和正在做这件事的人聊过','亲身去过相关的场景（实习、试课、旁听、体验）','做过一次小尝试来验证自己的想法','定了具体时间表，并且在执行'];
+const STAGE_TXT=[['还停留在「想」的阶段','var(--muted)'],['刚开始探索','var(--play)'],['正在验证','var(--work)'],['已在行动','var(--health)']];
+
+let S={step:0,now:{work:3,play:1,love:2,health:1},ideal:null,issues:{work:[],play:[],love:[],health:[]},tiny:{},tab:'work',seen:[0]};
+try{const raw=localStorage.getItem('balance-v1');if(raw)S=Object.assign(S,JSON.parse(raw))}catch(e){}
+if(!S.ideal)S.ideal={...S.now};
+const save=()=>{try{localStorage.setItem('balance-v1',JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// scale key
+$('scaleKey').innerHTML=SCALE.map((s,i)=>`<b>${i} · ${s[0]}</b><span>${s[1]}</span>`).join('');
+
+function picker(el,obj){
+  el.innerHTML=DIMS.map(d=>`<div class="dim"><div class="dim-head"><span class="dot" style="background:${d.c}"></span><span class="dim-name">${d.n}</span><span class="dim-desc">${d.d}</span></div>
+  <div class="pick" style="--c:${d.c}" role="group" aria-label="${d.n}">${SCALE.map((s,i)=>`<button type="button" data-k="${d.k}" data-v="${i}" aria-pressed="${obj[d.k]===i}"><span class="n">${i}</span><span class="t">${s[0]}</span></button>`).join('')}</div></div>`).join('');
+  el.onclick=e=>{const b=e.target.closest('button[data-k]');if(!b)return;obj[b.dataset.k]=+b.dataset.v;save();render()};
+}
+
+function radar(a,b){
+  const W=360,cx=180,cy=180,R=118,ang=[-90,0,90,180];
+  const pt=(i,v)=>{const r=R*v/4,t=ang[i]*Math.PI/180;return[cx+r*Math.cos(t),cy+r*Math.sin(t)]};
+  let g='';
+  for(let l=1;l<=4;l++)g+=`<polygon points="${DIMS.map((_,i)=>pt(i,l).join(',')).join(' ')}" fill="none" stroke="var(--line)" stroke-width="1"/>`;
+  DIMS.forEach((_,i)=>{const[x,y]=pt(i,4);g+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"/>`});
+  for(let l=1;l<=4;l++)g+=`<text x="${cx+4}" y="${cy-R*l/4+4}" font-size="10" fill="var(--muted)">${l}</text>`;
+  const poly=(o,col,fill,dash)=>`<polygon points="${DIMS.map((d,i)=>pt(i,o[d.k]).join(',')).join(' ')}" fill="${fill}" fill-opacity=".18" stroke="${col}" stroke-width="2.5" ${dash?'stroke-dasharray="5 4"':''} stroke-linejoin="round"/>`;
+  if(b){g+=poly(a,'var(--muted)','var(--muted)',true);g+=poly(b,'var(--accent)','var(--accent)')}
+  else g+=poly(a,'var(--accent)','var(--accent)');
+  const top=b||a;
+  DIMS.forEach((d,i)=>{const[x,y]=pt(i,top[d.k]);g+=`<circle cx="${x}" cy="${y}" r="5" fill="${d.c}" stroke="var(--surface)" stroke-width="2"/>`});
+  const lp=[[cx,26,'middle'],[W-10,cy+5,'end'],[cx,W-12,'middle'],[10,cy+5,'start']];
+  DIMS.forEach((d,i)=>{const v=b?`${a[d.k]}→${b[d.k]}`:a[d.k];g+=`<text x="${lp[i][0]}" y="${lp[i][1]}" text-anchor="${lp[i][2]}" font-size="15" font-weight="700" fill="${d.c}">${d.n} <tspan fill="var(--muted)" font-weight="400" font-size="13">${v}</tspan></text>`});
+  return `<svg viewBox="0 0 ${W} ${W}" role="img" aria-label="四象平衡图">${g}</svg>`;
+}
+
+function insightNow(){
+  const v=DIMS.map(d=>[d,S.now[d.k]]);const max=Math.max(...v.map(x=>x[1])),min=Math.min(...v.map(x=>x[1]));
+  if(max===min)return `你在四个领域的投入程度差不多，都是 ${max} 分。你可以想一想，这是你想要的均衡状态，还是你在每个领域都没能真正投入？`;
+  const hi=v.filter(x=>x[1]===max).map(x=>x[0].n).join('、'),lo=v.filter(x=>x[1]===min).map(x=>x[0].n).join('、');
+  return `从图上看，你目前把大部分心力放在了<b>${hi}</b>上，而<b>${lo}</b>得到的投入最少。请你带着这个画面进入下一步，看看每个领域里具体有哪些问题在困扰着你。`;
+}
+function insightIdeal(){
+  const up=DIMS.filter(d=>S.ideal[d.k]>S.now[d.k]).map(d=>d.n),dn=DIMS.filter(d=>S.ideal[d.k]<S.now[d.k]).map(d=>d.n);
+  if(!up.length&&!dn.length)return '你理想中的分配和现在一样，说明当下的状态正是你想要的，你可以继续守护这份平衡。';
+  let s='';if(up.length)s+=`你希望在<b>${up.join('、')}</b>上多投入一些。`;if(dn.length)s+=`同时，你也愿意从<b>${dn.join('、')}</b>中腾出一些精力。`;
+  return s+'我们每个人的精力都是有限的，当我们在一个领域增加投入时，往往也需要在别的领域留出空间。';
+}
+
+function stageOf(it){const n=(it.acts||[]).length;return n===0?0:n<=1?1:n<=3?2:3}
+
+function issueHTML(it,idx){
+  const isG=it.gravity===true,isS=it.gravity===false;
+  let body='';
+  if(isG)body=`<div class="panel g"><p>这是一个需要我们接纳的现实。你可以先试着对自己说：“我接受这件事的存在，我也可以决定自己怎样回应它。”</p>
+    <p class="q">接纳了这个事实以后，你还能在哪些地方做出改变？请你试着把它改写成一个可以着手解决的问题。</p>
+    <textarea data-f="reframe" data-i="${idx}" placeholder="例如：专业就业难 → 我怎样在半年内积累一段能让我被记住的项目经历？">${esc(it.reframe||'')}</textarea></div>`;
+  if(isS){const st=STAGE_TXT[stageOf(it)];
+    body=`<div class="panel"><p class="q">为了解决这个问题，你目前实际做过哪些事情？请勾选你真正做过的选项。</p>
+    <div class="checks">${ACTIONS.map((a,j)=>`<label><input type="checkbox" data-a="${j}" data-i="${idx}" ${(it.acts||[]).includes(j)?'checked':''}>${a}</label>`).join('')}</div>
+    <span class="stage" style="color:${st[1]};border:1px solid ${st[1]}">${st[0]}</span>
+    <p class="q">请写下你已经完成的具体步骤，或者你接下来可以去验证、去体验的一个行动。</p>
+    <textarea data-f="steps" data-i="${idx}" placeholder="例如：想成为生物学家 → 我有没有读过他们的日常？有没有去过实验室？有没有和一位在读博士聊过？">${esc(it.steps||'')}</textarea></div>`}
+  return `<div class="issue"><div class="issue-top"><span class="issue-title">${esc(it.text)}</span><button class="del" data-del="${idx}">删除</button></div>
+  <span class="q">这是一个重力问题吗？也就是说，这件事是不是客观存在、靠自己的努力改变不了的？</span>
+  <div class="choice"><button class="g" data-g="1" data-i="${idx}" aria-pressed="${isG}">是，无法改变</button><button data-g="0" data-i="${idx}" aria-pressed="${isS}">不是，可以被解决</button></div>${body}</div>`;
+}
+
+function renderIssues(){
+  const d=DIMS.find(x=>x.k===S.tab);
+  $('dimTabs').innerHTML=DIMS.map(x=>`<button role="tab" style="--c:${x.c}" data-tab="${x.k}" aria-selected="${x.k===S.tab}"><span class="dot" style="background:${x.c}"></span>${x.n}<span class="count">${S.issues[x.k].length||''}</span></button>`).join('');
+  $('newIssue').placeholder=`写下「${d.n}」里的一个困扰，按回车添加`;
+  const list=S.issues[S.tab];
+  $('issueList').innerHTML=list.length?list.map(issueHTML).join(''):`<p class="empty">你还没有在“${d.n}”里写下问题。你可以想一想，在这个领域里，有什么事情让你感到不满意、希望改变，或者一直让你纠结？</p>`;
+}
+$('dimTabs').onclick=e=>{const b=e.target.closest('[data-tab]');if(b){S.tab=b.dataset.tab;save();renderIssues()}};
+function addIssue(){const v=$('newIssue').value.trim();if(!v)return;S.issues[S.tab].push({text:v,gravity:null});$('newIssue').value='';save();renderIssues()}
+$('addIssue').onclick=addIssue;$('newIssue').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();addIssue()}};
+$('issueList').onclick=e=>{
+  const list=S.issues[S.tab];
+  const del=e.target.closest('[data-del]');if(del){list.splice(+del.dataset.del,1);save();renderIssues();return}
+  const g=e.target.closest('[data-g]');if(g){list[+g.dataset.i].gravity=g.dataset.g==='1';save();renderIssues()}
+};
+$('issueList').onchange=e=>{
+  const t=e.target;if(t.dataset.a!==undefined){const it=S.issues[S.tab][+t.dataset.i];it.acts=it.acts||[];const j=+t.dataset.a;
+    it.acts=t.checked?[...new Set([...it.acts,j])]:it.acts.filter(x=>x!==j);save();renderIssues()}
+};
+$('issueList').oninput=e=>{const t=e.target;if(t.dataset.f){S.issues[S.tab][+t.dataset.i][t.dataset.f]=t.value;save()}};
+
+const TINY_EG={work:'每天先做 25 分钟最难的那件事，再处理杂事',play:'每周留一个不被打扰的晚上，只做让自己开心的事',love:'每周主动给一位重要的人发一条消息或打一个电话',health:'每天提前 1 小时上床，或固定一个睡前放松流程坚持一周'};
+function renderGaps(){
+  $('gapList').innerHTML=DIMS.map(d=>{const a=S.now[d.k],b=S.ideal[d.k];const diff=b-a;
+    const lab=diff>0?'想多投入一些':diff<0?'想少投入一些':'维持现状';
+    return `<div class="gap-item"><div class="gap-head"><span class="dot" style="background:${d.c}"></span><span class="dim-name">${d.n}</span><span class="arrow">${a} → ${b} · ${lab}</span></div>
+    <label class="q" for="tiny-${d.k}">${diff===0?'你可以用什么小习惯来保持现在的状态？（选填）':'你这一周可以开始做的一个最小动作是什么？'}</label>
+    <textarea id="tiny-${d.k}" data-tiny="${d.k}" placeholder="例如：${TINY_EG[d.k]}">${esc(S.tiny[d.k]||'')}</textarea></div>`}).join('');
+}
+$('gapList').oninput=e=>{const k=e.target.dataset.tiny;if(k){S.tiny[k]=e.target.value;save()}};
+
+function summaryText(){
+  let t='【人生四象平衡】\n\n现在 → 理想\n';
+  DIMS.forEach(d=>t+=`${d.n}：${S.now[d.k]} → ${S.ideal[d.k]}\n`);
+  DIMS.forEach(d=>{const L=S.issues[d.k];if(!L.length&&!S.tiny[d.k])return;t+=`\n— ${d.n} —\n`;
+    L.forEach(it=>{t+=`· ${it.text}${it.gravity===true?'（重力问题）':''}\n`;
+      if(it.gravity===true&&it.reframe)t+=`  重新定义为：${it.reframe}\n`;
+      if(it.gravity===false){t+=`  进展：${STAGE_TXT[stageOf(it)][0]}\n`;if(it.steps)t+=`  步骤：${it.steps}\n`}});
+    if(S.tiny[d.k])t+=`最小一步：${S.tiny[d.k]}\n`});
+  return t;
+}
+function renderSummary(){
+  $('chartSum').innerHTML=radar(S.now,S.ideal);
+  let h='';
+  DIMS.forEach(d=>{const L=S.issues[d.k];
+    h+=`<h3 style="color:${d.c}">${d.n} <span class="arrow">${S.now[d.k]} → ${S.ideal[d.k]}</span></h3>`;
+    if(!L.length&&!S.tiny[d.k]){h+='<p class="empty" style="padding:0">你在这个领域还没有留下记录。</p>';return}
+    h+='<ul>'+L.map(it=>{let s=`<li>${esc(it.text)}${it.gravity===true?'<span class="tag-g">重力问题</span>':''}`;
+      if(it.gravity===true&&it.reframe)s+=`<br><span class="q">重新定义为：</span>${esc(it.reframe)}`;
+      if(it.gravity===false)s+=`<br><span class="q">进展：${STAGE_TXT[stageOf(it)][0]}</span>${it.steps?'<br>'+esc(it.steps):''}`;
+      return s+'</li>'}).join('')+'</ul>';
+    if(S.tiny[d.k])h+=`<p><b>最小一步：</b>${esc(S.tiny[d.k])}</p>`});
+  $('sumBody').innerHTML=h;
+}
+$('copyBtn').onclick=()=>{const txt=summaryText();
+  navigator.clipboard.writeText(txt).then(()=>$('copyNote').textContent='已复制').catch(()=>{
+    const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');$('copyNote').textContent='已复制'}catch(e){$('copyNote').textContent='请手动选择文字复制'}ta.remove()})};
+
+function go(i){S.step=i;if(!S.seen.includes(i))S.seen.push(i);save();render();window.scrollTo({top:0})}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(+b.dataset.go)});
+
+function render(){
+  $('steps').innerHTML=STEP_NAMES.map((n,i)=>`<button ${i===S.step?'aria-current="step"':''} class="${S.seen.includes(i)&&i!==S.step?'done':''}" data-go="${i}">${i+1} ${n}</button>`).join('');
+  ['s1','s2','s3','s4','s5'].forEach((id,i)=>$(id).hidden=i!==S.step);
+  picker($('nowPick'),S.now);picker($('idealPick'),S.ideal);
+  $('chartNow').innerHTML=radar(S.now);$('insightNow').innerHTML=insightNow();
+  $('chartIdeal').innerHTML=radar(S.now,S.ideal);$('insightIdeal').innerHTML=insightIdeal();
+  if(S.step===1)renderIssues();if(S.step===3)renderGaps();if(S.step===4)renderSummary();
+}
+render();
+</script>
+
+</body>
+</html>
